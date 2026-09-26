@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/* Tailwind v4 theme tokens. IMPORTANT: these — and the --sd-* variables below —
+   must live on :root. Tailwind's `@theme inline` block also compiles to a :root
+   rule, and it resolves `var(--sd-*)` at THAT rule's element (:root itself), not
+   at wherever a descendant happens to redeclare it. Radix portals (Dialog/Select)
+   also render as direct children of <body>, outside any wrapper div — so :root
+   is the only scope that reaches both normal content and portaled content. */
+@theme inline {
+  --color-background: var(--sd-background);
+  --color-foreground: var(--sd-foreground);
+  --color-card: var(--sd-card);
+  --color-card-foreground: var(--sd-card-foreground);
+  --color-popover: var(--sd-popover);
+  --color-popover-foreground: var(--sd-popover-foreground);
+  --color-primary: var(--sd-primary);
+  --color-primary-foreground: var(--sd-primary-foreground);
+  --color-secondary: var(--sd-secondary);
+  --color-secondary-foreground: var(--sd-secondary-foreground);
+  --color-muted: var(--sd-muted);
+  --color-muted-foreground: var(--sd-muted-foreground);
+  --color-accent: var(--sd-accent);
+  --color-accent-foreground: var(--sd-accent-foreground);
+  --color-destructive: var(--sd-destructive);
+  --color-destructive-foreground: var(--sd-destructive-foreground);
+  --color-border: var(--sd-border);
+  --color-input: var(--sd-input);
+  --color-ring: var(--sd-ring);
+  --radius-lg: var(--sd-radius);
+  --radius-md: calc(var(--sd-radius) - 2px);
+  --radius-sm: calc(var(--sd-radius) - 4px);
+  --font-body: var(--sans);
+  --font-display: var(--serif);
+}
+
+/* Every value here is read from the public site's own tokens (globals.css) under
+   NEW names (--sd-*), never by reusing --accent/--muted directly — reusing those
+   exact names here would shadow the site's own values for anything reading them
+   afterwards on the same element. Scoped to :root only via this stylesheet, which
+   Next.js only loads for /studio routes, so the public site is unaffected. */
+:root {
+  --sd-background: var(--bg);
+  --sd-foreground: var(--ink);
+  --sd-card: var(--surface);
+  --sd-card-foreground: var(--ink);
+  --sd-popover: var(--surface);
+  --sd-popover-foreground: var(--ink);
+  --sd-primary: var(--accent);
+  --sd-primary-foreground: var(--bg);
+  --sd-secondary: var(--surface);
+  --sd-secondary-foreground: var(--ink);
+  --sd-muted: var(--surface);
+  --sd-muted-foreground: var(--muted);
+  /* Deliberately NOT --surface: that's also --sd-popover/--sd-card's background,
+     so a hover fill using the same tone would be invisible against a popover. */
+  --sd-accent: var(--line);
+  --sd-accent-foreground: var(--ink);
+  --sd-destructive: #a23c2b;
+  --sd-destructive-foreground: var(--bg);
+  --sd-border: var(--line);
+  --sd-input: var(--line);
+  --sd-ring: var(--accent);
+  /* Sharp, crisp corners rather than the soft default shadcn radius. */
+  --sd-radius: 0.2rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sd-destructive: #d97757;
+  }
+}
+:root[data-theme="dark"] {
+  --sd-destructive: #d97757;
+}
+
+.studio-root {
+  background: var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+  font-family: var(--sans);
+}
