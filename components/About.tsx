@@ -11,14 +11,18 @@ export default function About() {
         <div className="about-body">
           <h2 className="section-title">About</h2>
           <p>
-            I&apos;m a self-taught artist working in two very different languages. With pencil and
-            charcoal I slow down: portraits, hands, folded cloth, the quiet weight of ordinary
-            objects, built up layer by layer over many hours.
+            I&apos;m a self-taught artist, still learning and finding my own way with two very
+            different forms of art. I enjoy taking my time with pencil and charcoal, especially when
+            drawing portraits and still life.
           </p>
           <p>
-            Acrylic is where I let go. Colour, weather and memory: fields after rain, harbours at
-            dusk, the heat of a market in the evening. Most of my paintings begin as small
-            sketches and end somewhere I didn&apos;t plan.
+            With acrylic, I&apos;m more relaxed and free. I like playing with colour, light, weather
+            and memories &mdash; fields after rain, quiet harbours at dusk, or the warmth of a market
+            in the evening.
+          </p>
+          <p>
+            Most of my paintings begin with a simple sketch or idea and often take me somewhere
+            unexpected. I&apos;m still learning and enjoy seeing where the process leads.
           </p>
           <dl className="facts">
             <div>

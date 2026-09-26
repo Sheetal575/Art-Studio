@@ -20,6 +20,9 @@ export default function Lightbox({ artworks, initialOrder, initialPos, onClose }
   const [open, setOpen] = useState(false);
   const [fading, setFading] = useState(false);
   const [isTouch, setIsTouch] = useState(false);
+  // Phone only: details start collapsed behind a chevron; the placard slides
+  // up as a bottom sheet when opened. Ignored by the desktop layout.
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const stageRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -105,6 +108,7 @@ export default function Lightbox({ artworks, initialOrder, initialPos, onClose }
   // Fade/reset on artwork change
   useEffect(() => {
     resetZoom();
+    setInfoOpen(false);
     setFading(true);
     const t = setTimeout(() => setFading(false), 120);
     return () => clearTimeout(t);
@@ -123,9 +127,14 @@ export default function Lightbox({ artworks, initialOrder, initialPos, onClose }
       else if (e.key === "ArrowRight") step(1);
       else if (e.key === "ArrowLeft") step(-1);
       else if (e.key === "Tab" && dialogRef.current) {
-        const f = dialogRef.current.querySelectorAll("button");
-        const first = f[0] as HTMLElement;
-        const last = f[f.length - 1] as HTMLElement;
+        // Only visible buttons participate — the phone-only toggles are
+        // display:none on desktop and must not become trap anchors.
+        const f = Array.from(dialogRef.current.querySelectorAll("button")).filter(
+          (b) => (b as HTMLElement).offsetParent !== null
+        ) as HTMLElement[];
+        if (f.length === 0) return;
+        const first = f[0];
+        const last = f[f.length - 1];
         if (e.shiftKey && document.activeElement === first) {
           e.preventDefault();
           last.focus();
@@ -231,9 +240,6 @@ export default function Lightbox({ artworks, initialOrder, initialPos, onClose }
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) step(dx < 0 ? 1 : -1);
   };
 
-  const hint = isTouch
-    ? "Double-tap to zoom · drag to explore · pinch to scale"
-    : "Click to zoom · scroll to scale · drag to pan";
 
   const tickPct = order.length > 1 ? (pos / (order.length - 1)) * 100 : 0;
 
@@ -241,14 +247,17 @@ export default function Lightbox({ artworks, initialOrder, initialPos, onClose }
 
   return createPortal(
     <div
-      className={`lb${open ? " open" : ""}`}
+      className={`lb${open ? " open" : ""}${infoOpen ? " info-open" : ""}`}
       ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="lbTitle"
       onClick={(e) => {
         const target = e.target as HTMLElement;
-        if (target === dialogRef.current || target.classList.contains("lb-stage")) handleClose();
+        if (target === dialogRef.current || target.classList.contains("lb-stage")) {
+          if (infoOpen) setInfoOpen(false);
+          else handleClose();
+        }
       }}
     >
       <button className="lb-btn lb-close" ref={closeBtnRef} aria-label="Close" onClick={handleClose}>
@@ -285,7 +294,26 @@ export default function Lightbox({ artworks, initialOrder, initialPos, onClose }
           onPointerCancel={endPointer}
         />
       </figure>
+      <button
+        className="lb-info-toggle"
+        aria-label="Show details"
+        aria-expanded={infoOpen}
+        onClick={() => setInfoOpen(true)}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 15l6-6 6 6" />
+        </svg>
+      </button>
       <aside className="lb-placard">
+        <button
+          className="lb-info-close"
+          aria-label="Hide details"
+          onClick={() => setInfoOpen(false)}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
         <p className="lb-count">
           <span id="lbCount">
             {pos + 1} / {order.length}
@@ -310,7 +338,6 @@ export default function Lightbox({ artworks, initialOrder, initialPos, onClose }
           <dd>{artwork.year}</dd>
         </dl>
         {artwork.description && <p className="lb-desc">{artwork.description}</p>}
-        <p className="lb-hint">{hint}</p>
       </aside>
     </div>,
     document.body
