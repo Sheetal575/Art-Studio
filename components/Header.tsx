@@ -53,6 +53,8 @@ export default function Header() {
     <header className={`site-header${scrolled ? " scrolled" : ""}`} id="header">
       <div className="wrap header-inner">
         <nav className="nav" aria-label="Main">
+          <div className="nav-brand">Sheetal's studio</div>
+          <div className="nav-links">
           <a href="#work">Work</a>
           <a href="#about">About</a>
           <a href="#contact">Contact</a>
@@ -84,6 +86,7 @@ export default function Header() {
               <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" />
             </svg>
           </button>
+          </div>
         </nav>
       </div>
     </header>
